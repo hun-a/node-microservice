@@ -1,0 +1,22 @@
+{
+  "name": "node-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/hun-a/node-microservice.git"
+  },
+  "author": "hun-a",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hun-a/node-microservice/issues"
+  },
+  "homepage": "https://github.com/hun-a/node-microservice#readme",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
+}
