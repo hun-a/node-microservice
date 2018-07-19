@@ -10,7 +10,7 @@ class tcpClient {
     this.onCreate = onCreate;
     this.onRead = onRead;
     this.onEnd = onEnd;
-    this.onEnd = onEnd;
+    this.onError = onError;
   }
 
   connect() {
