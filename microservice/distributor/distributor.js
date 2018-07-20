@@ -2,7 +2,7 @@
 
 let map = {};
 
-class distributor extends require('./server') {
+class distributor extends require('../server') {
   constructor() {
     super('distributor', 9000, ['POST/distributes', 'GET/distributes']);
   }
