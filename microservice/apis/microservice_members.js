@@ -10,7 +10,7 @@ class members extends require('../server') {
     );
 
     // Connect to the Distributor
-    this.connectToDistributor('127.0.9.1', 9000, data => {
+    this.connectToDistributor('127.0.0.1', 9000, data => {
       console.log('Distributor Notification', data);
     });
   }
