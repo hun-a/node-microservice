@@ -1,5 +1,6 @@
 'use strict';
 
+const cluster = require('cluster');
 const business = require('../../monolithic/monolithic_purchases');
 
 class purchases extends require('../server') {
@@ -24,4 +25,14 @@ class purchases extends require('../server') {
   }
 }
 
-new purchases();
+if (cluster.isMaster) {
+  cluster.fork(); // Create the child process
+
+  // When child process died, fork the child again for high availability
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+    cluster.fork();
+  });
+} else {
+  new purchases();
+}
