@@ -6,6 +6,12 @@ const conn = {
   database: 'monolithic'
 };
 
+const redis = require('redis').createClient();
+
+redis.on('error', err => {
+  console.log(`Redis error: ${err}`);
+});
+
 /**
  * Divide by each functions of perchases
  * 
@@ -50,18 +56,26 @@ function register(method, pathname, params, cb) {
     response.errormessage = 'Invalid Parameters';
     cb(response);
   } else {
-    const connection = mysql.createConnection(conn);
-    connection.connect();
-    connection.query('insert into purchases(userid, goodsid) values (?, ?)'
-    , [params.userid, params.goodsid]
-    , (err, results, fields) => {
-      if (err) {
+    redis.get(params.goodsid, (err, result) => {
+      if (err || result == null) {
         response.errorcode = 1;
-        response.errormessage = err;
+        response.errormessage = 'Redis failure';
+        cb(response);
+        return;
       }
-      cb(response);
+      const connection = mysql.createConnection(conn);
+      connection.connect();
+      connection.query('insert into purchases(userid, goodsid) values (?, ?)'
+      , [params.userid, params.goodsid]
+      , (err, results, fields) => {
+        if (err) {
+          response.errorcode = 1;
+          response.errormessage = err;
+        }
+        cb(response);
+      });
+      connection.end();
     });
-    connection.end();
   }
 }
 

@@ -3,8 +3,15 @@ const conn = {
   host: 'localhost',
   user: 'micro',
   password: 'service',
-  database: 'monolithic'
+  database: 'monolithic',
+  multipleStatements: true
 };
+
+const redis = require('redis').createClient();
+
+redis.on('error', err => {
+  console.log(`Redis error: ${err}`);
+});
 
 /**
  * Divide by each functions of goods
@@ -56,12 +63,15 @@ function register(method, pathname, params, cb) {
   } else {
     const connection = mysql.createConnection(conn);
     connection.connect();
-    connection.query('insert into goods(name, category, price, description) values(?, ?, ?, ?)'
+    connection.query('insert into goods(name, category, price, description) values(?, ?, ?, ?); select LAST_INSERT_ID() as id'
     , [params.name, params.category, params.price, params.description]
     , (err, results, fields) => {
       if (err) {
         response.errorcode = 1;
         response.errormessage = err;
+      } else {
+        const id = result[1][0].id;
+        redis.set(id, JSON.stringify(params));
       }
       cb(response);
     });
@@ -125,6 +135,8 @@ function unregister(method, pathname, params, cb) {
       if (err) {
         response.errorcode = 1;
         response.errormessage = err;
+      } else {
+        redis.del(params.id);
       }
       cb(response);
     });
